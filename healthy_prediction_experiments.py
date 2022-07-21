@@ -17,7 +17,6 @@ import numpy as np
 import pickle as pkl
 import argparse
 import copy
-import time
 from pathlib import Path
 
 from fit_models import fit_clv, fit_glv, fit_linear_alr, fit_linear_rel_abun, fit_glv_ridge
@@ -28,7 +27,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', type=str, help='Name of the model')
     parser.add_argument("-r", "--regression", type=str, help="Type of regression to use")
-    parser.add_argument("-l", "--limit_of_detection", type=float,
+    parser.add_argument("-l", "--limit_of_detection", type=float, required=False,
+                        default=1e5,
                         help="The limit of detection. Any initial abundance <= this value gets set to this value.")
     parser.add_argument("-o", "--output_loc",
         help="Location of the folder where the output is saved")
