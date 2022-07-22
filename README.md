@@ -1,3 +1,5 @@
+(Fork of tyjo/clv) -- for prediction experiments
+
 Code to replicate experiments from *Compositional Lotka-Volterra describes microbial dynamics in the simplex*.
 
 ## Environment
