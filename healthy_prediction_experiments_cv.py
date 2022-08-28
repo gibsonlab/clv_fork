@@ -5,8 +5,6 @@ matplotlib.use('agg')
 import logging
 import numpy as np
 import pickle as pkl
-import sys
-import mdsine2 as md2
 import argparse
 import copy
 import time
