@@ -52,17 +52,13 @@ def adjust_concentrations(Y):
     return Y_adjusted, C
 
 
-def add_limit_detection(X, lim=1e5):
+def add_limit_detection(x, lim=1e5):
     """adjust the 0 concentration values"""
 
     print("Using limit of detection value {}".format(lim))
-    X_ = copy.deepcopy(X)
-    new_X =[]
-
-    for x in X_:
-        new_X.append(np.where(x <= lim, lim, x))
-
-    return new_X
+    x_copy = np.copy(x)
+    x_copy[x_copy < lim] = lim
+    return x_copy
 
 def forward_sim_single_subj_glv(A, g, B, x0, u, times, rel_abund=False):
     """
