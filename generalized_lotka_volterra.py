@@ -471,7 +471,7 @@ def estimate_ridge_regularizers_cv(X, U, T, folds, no_effects=False, verbose=Fal
             A, g, B = ridge_regression_glv(train_X, train_U, train_T, r_A, r_g, r_B)
             sqr_err += compute_prediction_error(test_X, test_U, test_T, A, g, B, convert_to_rel)
 
-        if sqr_err < best_sqr_err:
+        if bool(np.isinf(best_sqr_err)) or sqr_err < best_sqr_err:
             best_r = (r_A, r_g, r_B)
             best_sqr_err = sqr_err
             print("\tr", (r_A, r_g, r_B), "sqr error", sqr_err)

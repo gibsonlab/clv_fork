@@ -97,75 +97,52 @@ def fit_model(Y, U, T, model, savepath, scale, n_subjects, regression_type="elas
         logging.warning(parameter_filename)
 
         if model == "clv":
-            try:
-                pred_clv = pkl.load(open(parameter_filename / "clv", "rb"))
-            except FileNotFoundError:
-                pred_clv = fit_clv(train_Y, train_T, train_U, test_Y, test_T,
-                           test_U,
-                           save_name=parameter_filename / "clv-model.pkl")
-                #pkl.dump(pred_clv, open(parameter_filename + "-clv", "wb"))
-                #print("saved: " + parameter_filename + " " + model)
+            pred_clv = fit_clv(train_Y, train_T, train_U, test_Y, test_T,
+                       test_U,
+                       save_name=parameter_filename / "clv-model.pkl")
+            #pkl.dump(pred_clv, open(parameter_filename + "-clv", "wb"))
+            #print("saved: " + parameter_filename + " " + model)
         elif model == "alr":
-            try:
-                pred_alr = pkl.load(open(parameter_filename / "alr", "rb"))
-            except FileNotFoundError:
-                pred_alr = fit_linear_alr(train_Y, train_T, train_U, test_Y,
-                    test_T, test_U,
-                  save_name=parameter_filename / "alr-model.pkl")
-                #pkl.dump(pred_alr, open(parameter_filename + "-alr", "wb"))
-                #print("saved: " + parameter_filename + " " + model)
-
+            pred_alr = fit_linear_alr(train_Y, train_T, train_U, test_Y,
+                test_T, test_U,
+              save_name=parameter_filename / "alr-model.pkl")
+            #pkl.dump(pred_alr, open(parameter_filename + "-alr", "wb"))
+            #print("saved: " + parameter_filename + " " + model)
         elif model == "lra":
-            try:
-                pred_lra = pkl.load(open(parameter_filename / "lra", "rb"))
-            except FileNotFoundError:
-                pred_lra = fit_linear_rel_abun(train_Y, train_T, train_U, test_Y,
-                   test_T, test_U,
-                   save_name=parameter_filename / "lra-model.pkl")
-                #pkl.dump(pred_lra, open(parameter_filename + "-lra", "wb"))
-                #print("saved: " + parameter_filename + " " + model)
-
+            pred_lra = fit_linear_rel_abun(train_Y, train_T, train_U, test_Y,
+               test_T, test_U,
+               save_name=parameter_filename / "lra-model.pkl")
+            #pkl.dump(pred_lra, open(parameter_filename + "-lra", "wb"))
+            #print("saved: " + parameter_filename + " " + model)
         elif model == "glv":
-            if regression_type=="ridge":
-                try:
-                    pred_glv = pkl.load(open(parameter_filename / "glv-ridge", "rb"))
-                except FileNotFoundError:
-                    pred_glv = fit_glv_ridge(
-                        train_Y, train_T, train_U, test_Y,
-                        test_T, test_U,
-                        scale=scale,
-                        save_name=parameter_filename / "glv-ridge-model.pkl"
-                    )
+            if regression_type == "ridge":
+                pred_glv = fit_glv_ridge(
+                    train_Y, train_T, train_U, test_Y,
+                    test_T, test_U,
+                    scale=scale,
+                    save_name=parameter_filename / "glv-ridge-model.pkl"
+                )
                 #pkl.dump(pred_glv, open(parameter_filename + "-glv-ridge", "wb"))
                 #print("saved: " + parameter_filename + " " + model)
             else:
-                try:
-                    pred_glv = pkl.load(open(parameter_filename / "glv-elastic-net", "rb"))
-                except FileNotFoundError:
-                    pred_glv = fit_glv(train_Y, train_T, train_U, test_Y, test_T,
-                        test_U, scale=scale,
-                        save_name=parameter_filename / "glv-elastic-net-model.pkl")
+                pred_glv = fit_glv(train_Y, train_T, train_U, test_Y, test_T,
+                    test_U, scale=scale,
+                    save_name=parameter_filename / "glv-elastic-net-model.pkl")
         elif model == "glv-ra":
             if regression_type == "ridge":
-                try:
-                    pred_glv_ra = pkl.load(open(parameter_filename / "glv-ra-ridge", "rb"))
-                except FileNotFoundError:
-                    pred_glv_ra = fit_glv_ridge(
-                        train_Y, train_T, train_U, test_Y,
-                        test_T, test_U,
-                        scale=scale,
-                        use_rel_abun=True,
-                        save_name=parameter_filename / "glv-ra-model.pkl"
-                    )
+                pred_glv_ra = fit_glv_ridge(
+                    train_Y, train_T, train_U, test_Y,
+                    test_T, test_U,
+                    scale=scale,
+                    use_rel_abun=True,
+                    save_name=parameter_filename / "glv-ra-model.pkl"
+                )
             else:
-                try:
-                    pred_glv_ra = pkl.load(open(parameter_filename / "glv-ra-elastic-net", "rb"))
-                except FileNotFoundError:
-                    pred_glv_ra = fit_glv(train_Y, train_T, train_U, test_Y, test_T,
-                        test_U, use_rel_abun=True,
-                        save_name=parameter_filename / "glv-ra-elastic-net-model.pkl")
-                    #pkl.dump(pred_glv_ra, open(parameter_filename + "-glv-ra", "wb"))
-                    #print("saved: " + parameter_filename + " " + model)
+                pred_glv_ra = fit_glv(train_Y, train_T, train_U, test_Y, test_T,
+                    test_U, use_rel_abun=True,
+                    save_name=parameter_filename / "glv-ra-elastic-net-model.pkl")
+                #pkl.dump(pred_glv_ra, open(parameter_filename + "-glv-ra", "wb"))
+                #print("saved: " + parameter_filename + " " + model)
 
 
 def adjust_concentrations(Y):
