@@ -5,6 +5,7 @@ from scipy.stats import linregress
 from scipy.integrate import RK45, solve_ivp
 from timeout import *
 import time
+from tqdm import tqdm
 
 
 def add_pseudo_counts(Y, pseudo_count=1e-3):
@@ -119,9 +120,11 @@ class GeneralizedLotkaVolterra:
         if self.alpha is None or self.r_A is None or self.r_g is None or self.r_B is None:
             if verbose:
                 print("Estimating regularizers...")
-            self.alpha, self.r_A, self.r_g, self.r_B = estimate_elastic_net_regularizers_cv(self.X,
-                                                      self.U, self.T, folds=folds, no_effects=self.no_effects,
-                                                      verbose=verbose, convert_to_rel=self.convert_to_rel)
+            self.alpha, self.r_A, self.r_g, self.r_B = estimate_elastic_net_regularizers_cv(
+                self.X,
+                self.U, self.T, folds=folds, no_effects=self.no_effects,
+                verbose=verbose, convert_to_rel=self.convert_to_rel
+            )
 
         if verbose:
             print("Estimating model parameters...")
@@ -307,6 +310,7 @@ def elastic_net_glv(X, U, T, Q_inv, alpha, r_A, r_g, r_B, tol=1e-3, verbose=Fals
 
         if it > max_iter:
             print("Warning: maximum number of iterations ({}) reached".format(max_iter), file=sys.stderr)
+            print("After max iterations, obj is ", obj)
             break
 
     A = AgB[:,:yDim]
@@ -390,7 +394,7 @@ def estimate_elastic_net_regularizers_cv(X, U, T, folds, no_effects=False, verbo
     np.set_printoptions(suppress=True)
     best_r = 0
     best_sqr_err = np.inf
-    for i, (alpha, r_A, r_g, r_B) in enumerate(alpha_rA_rg_rB):
+    for i, (alpha, r_A, r_g, r_B) in enumerate(tqdm(alpha_rA_rg_rB)):
         #print("\tTesting regularization parameter set", i+1, "of", len(alpha_rA_rg_rB), file=sys.stderr)
         sqr_err = 0
         for fold in range(folds):
@@ -420,6 +424,8 @@ def estimate_elastic_net_regularizers_cv(X, U, T, folds, no_effects=False, verbo
             best_r = (alpha, r_A, r_g, r_B)
             best_sqr_err = sqr_err
             print("\tr", (alpha, r_A, r_g, r_B), "sqr error", sqr_err)
+    if np.isinf(best_sqr_err):
+        raise ValueError("Grid search failed.")
     np.set_printoptions(suppress=False)
     return best_r
 
@@ -471,10 +477,12 @@ def estimate_ridge_regularizers_cv(X, U, T, folds, no_effects=False, verbose=Fal
             A, g, B = ridge_regression_glv(train_X, train_U, train_T, r_A, r_g, r_B)
             sqr_err += compute_prediction_error(test_X, test_U, test_T, A, g, B, convert_to_rel)
 
-        if bool(np.isinf(best_sqr_err)) or sqr_err < best_sqr_err:
+        if sqr_err < best_sqr_err:
             best_r = (r_A, r_g, r_B)
             best_sqr_err = sqr_err
             print("\tr", (r_A, r_g, r_B), "sqr error", sqr_err)
+    if np.isinf(best_sqr_err):
+        raise ValueError("Grid search failed.")
     np.set_printoptions(suppress=False)
     return best_r
 
