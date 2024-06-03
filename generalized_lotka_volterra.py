@@ -378,6 +378,7 @@ def estimate_elastic_net_regularizers_cv(X, U, T, folds, no_effects=False, verbo
     elif len(X) < folds:
         folds = len(X)
 
+    print("Grid search on elastic net")
     rs = [0.1, 0.5, 0.7, 0.9, 1]
     alphas = [0.1, 1, 10]
 
@@ -423,7 +424,7 @@ def estimate_elastic_net_regularizers_cv(X, U, T, folds, no_effects=False, verbo
         if sqr_err < best_sqr_err:
             best_r = (alpha, r_A, r_g, r_B)
             best_sqr_err = sqr_err
-            print("\tr", (alpha, r_A, r_g, r_B), "sqr error", sqr_err)
+            # print("\tr", (alpha, r_A, r_g, r_B), "sqr error", sqr_err)
     if np.isinf(best_sqr_err):
         raise ValueError("Grid search failed.")
     np.set_printoptions(suppress=False)
@@ -438,6 +439,7 @@ def estimate_ridge_regularizers_cv(X, U, T, folds, no_effects=False, verbose=Fal
     elif len(X) < folds:
         folds = len(X)
 
+    print("grid search on Ridge")
     rs = [0.125, 0.25, 0.5, 1, 2, 4, 8]
     rA_rg_rB = []
     for r_A in rs:
