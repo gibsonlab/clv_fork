@@ -60,7 +60,7 @@ def add_limit_detection(x, lim=1e5):
     x_copy[x_copy < lim] = lim
     return x_copy
 
-def forward_sim_single_subj_glv(A, g, B, x0, u, times, rel_abund=False):
+def forward_sim_single_subj_glv(A, g, B, x0, u, times, rel_abund=False, solver_method: str = 'RK45'):
     """
     forward simulate for a single subject
     (np.ndarray) x0 : N dimensional array containing the initial abundances(log)
@@ -91,7 +91,7 @@ def forward_sim_single_subj_glv(A, g, B, x0, u, times, rel_abund=False):
         else:
             grad = grad_fn(A, g, None, None)
         dt = times[t] - times[t-1]
-        ivp = solve_ivp(grad, (0, 0+dt), xt, method="RK45")
+        ivp = solve_ivp(grad, (0, 0+dt), xt, method=solver_method)
         xt = ivp.y[:, -1]
         if rel_abund:
             x_pred[t] = np.exp(xt) / np.sum(np.exp(xt))
@@ -100,7 +100,7 @@ def forward_sim_single_subj_glv(A, g, B, x0, u, times, rel_abund=False):
 
     return x_pred
 
-def forward_sim_single_subj_lra(A, g, B, x0, u, times):
+def forward_sim_single_subj_lra(A, g, B, x0, u, times, solver_method: str = 'RK45'):
     """
     forward simulate for a single subject
     (np.ndarray) x0 : N dimensional array containing the initial abundancesm(rel)
@@ -136,7 +136,7 @@ def forward_sim_single_subj_lra(A, g, B, x0, u, times):
         else:
             grad = grad_fn(A, g, None, None)
         dt = times[t] - times[t-1]
-        ivp = solve_ivp(grad, (0, 0+dt), xt, method="RK45")
+        ivp = solve_ivp(grad, (0, 0+dt), xt, method=solver_method)
         xt = ivp.y[:, -1]
         xt[xt < 0] = 0
         xt = xt / np.sum(xt) #computing the relative abundance
@@ -146,7 +146,7 @@ def forward_sim_single_subj_lra(A, g, B, x0, u, times):
     return x_pred
 
 
-def forward_sim_single_subj_clv(A, g, B, x0, u, times, denom, pc):
+def forward_sim_single_subj_clv(A, g, B, x0, u, times, denom, pc, solver_method: str = 'RK45'):
     """
     forward simulate for a single subject for clv
     (np.ndarray) x0 : N dimensional array containing the initial abundances(rel)
@@ -204,7 +204,7 @@ def forward_sim_single_subj_clv(A, g, B, x0, u, times, denom, pc):
     for t in range(1, times.shape[0]):
         grad = grad_fn(A, g, B, u[t-1], denom)
         dt = times[t] - times[t-1]
-        ivp = solve_ivp(grad, (0, 0+dt), xt, method="RK45")
+        ivp = solve_ivp(grad, (0, 0+dt), xt, method=solver_method)
         xt = ivp.y[:, -1]
         pt = compute_rel_abund(xt, denom).flatten() #relative abundance
         pred_p[t] = pt
